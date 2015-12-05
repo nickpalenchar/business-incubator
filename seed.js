@@ -21,29 +21,50 @@ var mongoose = require('mongoose');
 var Promise = require('bluebird');
 var chalk = require('chalk');
 var connectToDb = require('./server/db');
-var User = Promise.promisifyAll(mongoose.model('User'));
+var BusinessUser = Promise.promisifyAll(mongoose.model('BusinessUser'));
+var ConsumerUser = Promise.promisifyAll(mongoose.model('ConsumerUser'));
 
-var seedUsers = function () {
+// ConsumerUser.create(
+//     {
+//         name: 'Tom',
+//         email: 'tom@issharing@io',
+//         interests: ['Coding', 'Understanding'],
+//         address: '5 Hanover Sq'
+//     }
+// );
 
-    var users = [
+var seedBusinessUsers = function () {
+    var businessUsers = [
         {
-            email: 'testing@fsa.com',
-            password: 'password'
-        },
-        {
-            email: 'obama@gmail.com',
-            password: 'potus'
+            name: 'Gordon',
+            email: 'gordon@yallstreet.com',
+            businessType: 'restaurant',
+            businessAddress: '30 Wall St',
+            pitch: 'Will trade muffins for pot',
+            interests: ['Leisurely walks in parks', 'Indian Food'],
         }
     ];
-
-    return User.createAsync(users);
-
+    return BusinessUser.createAsync(businessUsers);
 };
 
+
+var seedConsumerUsers = function () {
+    var consumerUsers = [
+        {
+            name: 'Tom',
+            email: 'tom@issharing@io',
+            interests: ['Coding', 'Understanding'],
+            address: '5 Hanover Sq'
+        }
+    ];
+    return ConsumerUser.createAsync(consumerUsers);
+}
+
+
 connectToDb.then(function () {
-    User.findAsync({}).then(function (users) {
+    ConsumerUser.findAsync({}).then(function (users) {
         if (users.length === 0) {
-            return seedUsers();
+            return seedConsumerUsers();
         } else {
             console.log(chalk.magenta('Seems to already be user data, exiting!'));
             process.kill(0);
